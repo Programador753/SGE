@@ -1,9 +1,6 @@
 import os
-import dspy
 import ast
 from dotenv import load_dotenv
-from database import DataManager
-from agent import SQLAgentModule
 
 # --- Librerías para UI ---
 from rich.console import Console
@@ -15,9 +12,10 @@ from rich.text import Text
 # Inicializar consola
 console = Console()
 
-load_dotenv()
+load_dotenv(override=False)
 
 def setup_dspy():
+    import dspy  # ← Importar aquí
     turbo = dspy.LM(
         model='openai/google/gemini-2.5-flash', 
         api_key=os.getenv("OPENROUTER_API_KEY"),
@@ -61,7 +59,13 @@ def print_result_table(result_str):
         console.print(Panel(str(result_str), title="Respuesta Texto", border_style="blue"))
 
 def main():
-    console.rule("[bold blue]Agente SQL Inteligente[/bold blue]")
+    console.rule("[bold blue]Agente SQL Inteligente[/bold blue]")  # ← Ahora aparece RÁPIDO
+    
+    with console.status("[bold green]Cargando dependencias...", spinner="dots"):
+        # Importaciones pesadas con feedback visual
+        from database import DataManager
+        from agent import SQLAgentModule
+        import dspy
     
     setup_dspy()
     
@@ -112,3 +116,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+    
